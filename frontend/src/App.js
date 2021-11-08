@@ -13,14 +13,13 @@ const App = (props) => {
   : poruke.filter(poruka => poruka.vazno === true)
 
   const promjenaVaznostiPoruke = (id) => {
-    const url = `http://localhost:3001/api/poruke/${id}`
     const poruka = poruke.find(p => p.id === id)
     const modPoruka = {
       ...poruka,
       vazno: !poruka.vazno
     }
   
-    axios.put(url, modPoruka)
+    porukeAkcije.osvjezi(id, modPoruka)
       .then(response => {
         console.log(response)
         postaviPoruke(poruke.map(p => p.id !== id ? p : response.data))
@@ -28,7 +27,7 @@ const App = (props) => {
   }
 
   const brisiPoruku = (id) => {
-    axios.delete(`http://localhost:3001/api/poruke/${id}`)
+    porukeAkcije.brisi(id)
       .then(response => {
         console.log(response);
         postaviPoruke(poruke.filter(p => p.id !== id))
@@ -45,16 +44,13 @@ const App = (props) => {
     console.log('Klik', e.target)
     const noviObjekt = {
       sadrzaj: unosPoruke,
-      datum: new Date().toISOString(),
       vazno: Math.random() > 0.5      
     }
-    axios.post("http://localhost:3001/api/poruke", noviObjekt)
+    porukeAkcije.stvori(noviObjekt)
     .then(res => {
       postaviPoruke(poruke.concat(res.data))
       postaviUnos('')
     })
-    /* postaviPoruke(poruke.concat(noviObjekt))
-    postaviUnos('') */
   }
 
   const promjenaUnosa = (e) => {
