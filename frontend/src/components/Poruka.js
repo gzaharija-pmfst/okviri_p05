@@ -1,8 +1,14 @@
 import React from 'react'
 
-const Poruka = ({poruka}) => {
+const Poruka = ({poruka, promjenaVaznosti}) => {
+  const oznaka = poruka.vazno
+  ? 'označi kao nevažno' : 'označi kao važno'
+  
   return (
-    <li>{poruka.sadrzaj}</li>
+    <li>
+      {poruka.sadrzaj}
+      <button onClick={promjenaVaznosti}>{oznaka}</button>
+    </li>
   )
 }
 

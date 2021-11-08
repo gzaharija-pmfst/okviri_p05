@@ -18,8 +18,11 @@ let poruke = [
   ]
   
   const express = require('express')
+  const cors = require('cors')
   const app = express()
+  app.use(cors())
   app.use(express.json())
+  
     
   app.get('/', (req, res) =>{
     res.send('<h1>Pozdrav od Express servera!</h1>')
@@ -65,6 +68,15 @@ let poruke = [
     poruke = poruke.concat(poruka)
     
     res.json(poruka)
+  })
+
+  app.put('/api/poruke/:id', (req, res) => {
+
+    const podatak = req.body
+    const id = Number(req.params.id)
+    console.log("Promjena važnosti poruke sa ID", id)
+    poruke.map(p => p.id !== id ? p : podatak)     
+    res.json(podatak)
   })
 
   const generirajId = () => {

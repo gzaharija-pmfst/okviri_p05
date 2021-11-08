@@ -1,8 +1,9 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import Poruka from './components/Poruka'
+import axios from 'axios'
 
 const App = (props) => {
-  const [ poruke, postaviPoruke] = useState(props.poruke)
+  const [ poruke, postaviPoruke] = useState([])
   const [ unosPoruke, postaviUnos] = useState('unesi poruku...')
   const [ ispisSve, postaviIspis] = useState(true)
 
@@ -10,17 +11,41 @@ const App = (props) => {
   ? poruke
   : poruke.filter(poruka => poruka.vazno === true)
 
+  const promjenaVaznostiPoruke = (id) => {
+    const url = `http://localhost:3001/api/poruke/${id}`
+    const poruka = poruke.find(p => p.id === id)
+    const modPoruka = {
+      ...poruka,
+      vazno: !poruka.vazno
+    }
+  
+    axios.put(url, modPoruka)
+      .then(response => {
+        console.log(response)
+        postaviPoruke(poruke.map(p => p.id !== id ? p : response.data))
+      })
+  }
+
+  useEffect( () => {
+    axios.get("http://localhost:3001/api/poruke")
+    .then(res => postaviPoruke(res.data))
+  }, [])
+
   const novaPoruka = (e) => {
     e.preventDefault()
     console.log('Klik', e.target)
     const noviObjekt = {
-      id: poruke.length + 1,
       sadrzaj: unosPoruke,
       datum: new Date().toISOString(),
       vazno: Math.random() > 0.5      
     }
-    postaviPoruke(poruke.concat(noviObjekt))
-    postaviUnos('')
+    axios.post("http://localhost:3001/api/poruke", noviObjekt)
+    .then(res => {
+      postaviPoruke(poruke.concat(res.data))
+      postaviUnos('')
+    })
+    /* postaviPoruke(poruke.concat(noviObjekt))
+    postaviUnos('') */
   }
 
   const promjenaUnosa = (e) => {
@@ -37,7 +62,7 @@ const App = (props) => {
       </div>
       <ul>
         {porukeZaIspis.map(p =>
-          <Poruka key={p.id} poruka={p} />
+          <Poruka key={p.id} poruka={p} promjenaVaznosti={() => promjenaVaznostiPoruke(p.id)} />
         )}        
       </ul>
       <form onSubmit={novaPoruka}>
