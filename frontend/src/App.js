@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import Poruka from './components/Poruka'
 import axios from 'axios'
+import porukeAkcije from './services/poruke'
 
 const App = (props) => {
   const [ poruke, postaviPoruke] = useState([])
@@ -26,8 +27,16 @@ const App = (props) => {
       })
   }
 
+  const brisiPoruku = (id) => {
+    axios.delete(`http://localhost:3001/api/poruke/${id}`)
+      .then(response => {
+        console.log(response);
+        postaviPoruke(poruke.filter(p => p.id !== id))
+      })
+  }
+
   useEffect( () => {
-    axios.get("http://localhost:3001/api/poruke")
+    porukeAkcije.dohvatiSve()
     .then(res => postaviPoruke(res.data))
   }, [])
 
@@ -62,7 +71,8 @@ const App = (props) => {
       </div>
       <ul>
         {porukeZaIspis.map(p =>
-          <Poruka key={p.id} poruka={p} promjenaVaznosti={() => promjenaVaznostiPoruke(p.id)} />
+          <Poruka key={p.id} poruka={p} promjenaVaznosti={() => promjenaVaznostiPoruke(p.id)}
+          brisiPoruku={() => brisiPoruku(p.id)} />
         )}        
       </ul>
       <form onSubmit={novaPoruka}>
