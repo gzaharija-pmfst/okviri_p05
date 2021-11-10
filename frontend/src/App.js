@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react'
 import Poruka from './components/Poruka'
-import axios from 'axios'
 import porukeAkcije from './services/poruke'
 
 const App = (props) => {
