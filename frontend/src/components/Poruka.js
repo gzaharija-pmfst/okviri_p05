@@ -9,7 +9,7 @@ const Poruka = ({poruka, promjenaVaznosti, brisiPoruku}) => {
     <li>
       <span className={poruka.vazno ? 'vazno' : 'nevazno'}>{poruka.sadrzaj}</span>
       <button onClick={promjenaVaznosti}>{oznaka}</button>
-      <button onClick={brisiPoruku}>❌</button>
+      <button onClick={brisiPoruku}><span role="img" aria-label="delete">❌</span></button>
     </li>
   )
 }
